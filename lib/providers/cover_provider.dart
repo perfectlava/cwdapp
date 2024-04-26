@@ -9,16 +9,18 @@ final coverProvider =
 class coverNotifier extends StateNotifier<List<CoverImage>> {
   coverNotifier()
       : super([
+          CoverImage(title: "Only in Gallery", img: "img1.png"),
           CoverImage(
-              title: "A good title 1",
-              subtitle:
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-              img: "img1.png"),
+            title: "Only in list",
+            subtitle: "this can only be found in here",
+          ),
           CoverImage(
-              title: "A good title 2", subtitle: 'subtitle', img: "img2.png"),
+              title: "Everywhere",
+              subtitle: 'this link is same in both the botthom and the top',
+              img: "img2.png"),
           CoverImage(
               title: "A good title 3",
-              subtitle: 'subtitle',
+              subtitle: 'this is a link to google.com',
               img: "img3.png",
               link: "https://www.google.com"),
         ]);

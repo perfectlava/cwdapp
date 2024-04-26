@@ -75,7 +75,14 @@ class _GalleryState extends ConsumerState<Gallery> {
 
   @override
   Widget build(BuildContext context) {
-    List<CoverImage> covers = ref.watch(coverProvider);
+    List<CoverImage> covers = [];
+    ref.read(coverProvider).forEach(
+      (element) {
+        if (element.img.isNotEmpty) {
+          covers.add(element);
+        }
+      },
+    );
     return Column(children: [
       SizedBox(
         height: Layout.height(Layout.getScreenWidth() > 700 ? 700 : 350),

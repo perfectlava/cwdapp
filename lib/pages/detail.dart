@@ -25,22 +25,24 @@ class Detail extends StatelessWidget {
         ),
         body: Stack(children: [
           //background image
-          Positioned(
-              left: 0,
-              right: 0,
-              child: Container(
-                width: double.maxFinite,
-                height: Layout.height(300),
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: AssetImage("assets/${cover.img}"))),
-              )),
+          cover.img.isNotEmpty
+              ? Positioned(
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    width: double.maxFinite,
+                    height: Layout.height(300),
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage("assets/${cover.img}"))),
+                  ))
+              : Container(height: double.maxFinite, color: Colors.black),
           Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              top: Layout.height(273),
+              top: cover.img.isNotEmpty ? Layout.height(273) : 0,
               child: Container(
                   padding: EdgeInsets.only(
                       left: Layout.width(20),
@@ -55,7 +57,8 @@ class Detail extends StatelessWidget {
                         )
                       ],
                       borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(Layout.height(25)),
+                        top: Radius.circular(
+                            Layout.height(cover.img.isNotEmpty ? 18 : 0)),
                       ),
                       color: Colors.blueAccent[100]),
                   child: Column(
