@@ -50,9 +50,9 @@ class _GalleryState extends ConsumerState<Gallery> {
 
     return Link(
         target: LinkTarget.defaultTarget,
-        uri: Uri.parse(cover.link),
+        uri: Uri.parse(cover.link!),
         builder: (context, followLink) => InkWell(
-              onTap: cover.link.isEmpty
+              onTap: cover.link!.isEmpty
                   ? () => context.go("/detail", extra: cover)
                   : followLink,
               child: AnimatedContainer(
@@ -66,7 +66,7 @@ class _GalleryState extends ConsumerState<Gallery> {
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: AssetImage("assets/${cover.img}"),
+                    image: NetworkImage("${cover.img}"),
                   ),
                 ),
               ),
@@ -75,37 +75,44 @@ class _GalleryState extends ConsumerState<Gallery> {
 
   @override
   Widget build(BuildContext context) {
-    List<CoverImage> covers = [];
-    ref.read(coverProvider).forEach(
-      (element) {
-        if (element.img.isNotEmpty) {
-          covers.add(element);
-        }
-      },
-    );
-    return Column(children: [
-      SizedBox(
-        height: Layout.height(Layout.getScreenWidth() > 700 ? 700 : 350),
-        child: PageView.builder(
-            controller: ctrl,
-            itemCount: covers.length,
-            physics: const BouncingScrollPhysics(),
-            itemBuilder: (context, int index) {
-              // Active page
-              bool active = index == currentPage;
-              return _buildStoryPage(active, covers[index]);
-            }),
-      ),
-      DotsIndicator(
-        dotsCount: covers.length,
-        position: currentPage,
-        decorator: DotsDecorator(
-          size: const Size.square(9.0),
-          activeSize: const Size(18.0, 9.0),
-          activeShape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
-        ),
-      ),
-    ]);
+    return ref.watch(galleryProvider).when(
+        data: (List<CoverImage> covers) {
+          // List<CoverImage> covers = [];
+          // for (var element in coverList) {
+          //   if (element.img!.isNotEmpty) {
+          //     covers.add(element);
+          //   }
+          // }
+          return Column(children: [
+            SizedBox(
+                height:
+                    Layout.height(Layout.getScreenWidth() > 700 ? 700 : 350),
+                child: PageView.builder(
+                    controller: ctrl,
+                    itemCount: covers.length,
+                    physics: const BouncingScrollPhysics(),
+                    itemBuilder: (context, int index) {
+                      // Active page
+                      bool active = index == currentPage;
+                      return _buildStoryPage(active, covers[index]);
+                    })),
+            DotsIndicator(
+              dotsCount: covers.length,
+              position: currentPage,
+              decorator: DotsDecorator(
+                size: const Size.square(9.0),
+                activeSize: const Size(18.0, 9.0),
+                activeShape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5.0)),
+              ),
+            ),
+          ]);
+        },
+        error: (error, stackTrace) => const Center(child: Text("error")),
+        loading: () {
+          return const Center(
+            child: Text("Loading"),
+          );
+        });
   }
 }

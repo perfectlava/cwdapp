@@ -25,7 +25,7 @@ class Detail extends StatelessWidget {
         ),
         body: Stack(children: [
           //background image
-          cover.img.isNotEmpty
+          cover.img!.isNotEmpty
               ? Positioned(
                   left: 0,
                   right: 0,
@@ -35,14 +35,14 @@ class Detail extends StatelessWidget {
                     decoration: BoxDecoration(
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: AssetImage("assets/${cover.img}"))),
+                            image: NetworkImage(cover.img!))),
                   ))
               : Container(height: double.maxFinite, color: Colors.black),
           Positioned(
               left: 0,
               right: 0,
               bottom: 0,
-              top: cover.img.isNotEmpty ? Layout.height(273) : 0,
+              top: cover.img!.isNotEmpty ? Layout.height(273) : 0,
               child: Container(
                   padding: EdgeInsets.only(
                       left: Layout.width(20),
@@ -58,7 +58,7 @@ class Detail extends StatelessWidget {
                       ],
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(
-                            Layout.height(cover.img.isNotEmpty ? 18 : 0)),
+                            Layout.height(cover.img!.isNotEmpty ? 18 : 0)),
                       ),
                       color: Colors.blueAccent[100]),
                   child: Column(
@@ -82,7 +82,7 @@ class Detail extends StatelessWidget {
                                 padding: EdgeInsets.symmetric(
                                     vertical: Layout.height(35)),
                                 child: Text(
-                                  cover.description,
+                                  cover.description!,
                                   style: TextStyle(
                                       fontSize: Layout.height(16),
                                       color: Colors.grey[300],

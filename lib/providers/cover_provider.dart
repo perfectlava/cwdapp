@@ -1,27 +1,29 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cwdapp/models/cover.dart';
-import 'package:riverpod/riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-final coverProvider =
-    StateNotifierProvider<coverNotifier, List<CoverImage>>((ref) {
-  return coverNotifier();
+final galleryProvider = FutureProvider<List<CoverImage>>((ref) async {
+  QuerySnapshot data = await FirebaseFirestore.instance
+      .collection("covers")
+      .where("img", isNull: false)
+      .get();
+  List<CoverImage> list = [];
+  for (var id in data.docs) {
+    CoverImage newCover = CoverImage.fromMap(id.data() as Map<String, dynamic>);
+    list.add(newCover);
+  }
+  return list;
 });
 
-class coverNotifier extends StateNotifier<List<CoverImage>> {
-  coverNotifier()
-      : super([
-          CoverImage(title: "Only in Gallery", img: "img1.png"),
-          CoverImage(
-            title: "Only in list",
-            subtitle: "this can only be found in here",
-          ),
-          CoverImage(
-              title: "Everywhere",
-              subtitle: 'this link is same in both the botthom and the top',
-              img: "img2.png"),
-          CoverImage(
-              title: "A good title 3",
-              subtitle: 'this is a link to google.com',
-              img: "img3.png",
-              link: "https://www.google.com"),
-        ]);
-}
+final mainListProvider = FutureProvider<List<CoverImage>>((ref) async {
+  QuerySnapshot data = await FirebaseFirestore.instance
+      .collection("covers")
+      .where("subtitle", isNull: false)
+      .get();
+  List<CoverImage> list = [];
+  for (var id in data.docs) {
+    CoverImage newCover = CoverImage.fromMap(id.data() as Map<String, dynamic>);
+    list.add(newCover);
+  }
+  return list;
+});

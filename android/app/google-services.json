@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1060417419957",
+    "project_id": "cwdapp-91162",
+    "storage_bucket": "cwdapp-91162.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1060417419957:android:6e8bb8c16b96ea5dae1cfc",
+        "android_client_info": {
+          "package_name": "com.example.cwdapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDY-G5vpDjdR92HP5eAQjRA3YAerUlp8pE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
