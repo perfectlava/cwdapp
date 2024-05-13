@@ -1,35 +1,33 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cwdapp/pages/home/gallery.dart';
 import 'package:cwdapp/pages/home/main_list.dart';
 import 'package:cwdapp/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/link.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<DocumentSnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('others')
-            .doc('links')
-            .snapshots(),
-        builder:
-            (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-              return const CircularProgressIndicator();
-            default:
-              if (!snapshot.hasData || snapshot.data!.data() == null) {
-                return const Text('No data found');
-              } else {
-                String link = snapshot.data![
-                    'attendance']; // Assuming 'link' is the field name in Firestore
+    // return StreamBuilder<DocumentSnapshot>(
+    //     stream: FirebaseFirestore.instance
+    //         .collection('others')
+    //         .doc('links')
+    //         .snapshots(),
+    //     builder:
+    //         (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+    //       if (snapshot.hasError) {
+    //         return Text('Error: ${snapshot.error}');
+    //       }
+    //       switch (snapshot.connectionState) {
+    //         case ConnectionState.waiting:
+    //           return const Scaffold(body: CircularProgressIndicator());
+    //         default:
+    //           if (!snapshot.hasData || snapshot.data!.data() == null) {
+    //             return const Text('No data found');
+    //           } else {
+    //             String link = snapshot.data![
+    //                 'attendance']; // Assuming 'link' is the field name in Firestore
                 return Scaffold(
                     drawer: Drawer(
                       child: ListView(
@@ -42,13 +40,15 @@ class HomePage extends StatelessWidget {
                           ),
                           ListTile(
                             leading: const Icon(Icons.checklist_rtl),
-                            title: Link(
-                                target: LinkTarget.defaultTarget,
-                                uri: Uri.parse(link),
-                                builder: (context, followLink) =>
-                                    GestureDetector(
-                                        onTap: followLink,
-                                        child: const Text("Attendance"))),
+                            title: const Text("Attendance"),
+                            onTap: () => context.go("/attendance"),
+                            // Link(
+                            //     target: LinkTarget.defaultTarget,
+                            //     uri: Uri.parse(link),
+                            //     builder: (context, followLink) =>
+                            //         GestureDetector(
+                            //             onTap: followLink,
+                            //             child: const Text("Attendance"))),
                           )
                         ],
                       ),
@@ -58,8 +58,9 @@ class HomePage extends StatelessWidget {
                     ),
                     body: const Column(
                         children: [Gallery(), Expanded(child: MainList())]));
-              }
-          }
-        });
+              // }
+          // }
+        // }
+        // );
   }
 }
