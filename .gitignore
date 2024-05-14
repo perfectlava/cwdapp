@@ -41,3 +41,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+assets/facenet.tflite
+assets/mobile_face_net.tflite
+lib/secret.dart

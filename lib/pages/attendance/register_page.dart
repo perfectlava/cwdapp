@@ -117,7 +117,8 @@ class _RegisterState extends State<Register> {
   //perform Face Recognition
 
   //Face Registration Dialogue
-  TextEditingController textEditingController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController sidController = TextEditingController();
   showFaceRegistrationDialogue(Uint8List cropedFace, Recognition recognition) {
     showDialog(
       context: context,
@@ -125,7 +126,7 @@ class _RegisterState extends State<Register> {
         title: const Text("Face Registration", textAlign: TextAlign.center),
         alignment: Alignment.center,
         content: SizedBox(
-          height: 340,
+          height: Layout.height(420),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -140,20 +141,41 @@ class _RegisterState extends State<Register> {
               SizedBox(
                 width: Layout.height(200),
                 child: TextField(
-                    controller: textEditingController,
+                    controller: nameController,
                     decoration: const InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
-                        hintText: "Enter Name")),
+                        hintText: "Name")),
+              ),
+              SizedBox(
+                width: Layout.height(200),
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  controller: sidController,
+                  maxLength: 5,
+                  decoration: const InputDecoration(
+                      fillColor: Colors.white,
+                      filled: true,
+                      hintText: "Student ID"),
+                  validator: (value) {
+                    if (value == null) {
+                      return 'Please enter your student id';
+                    } else if (int.tryParse(value) == null) {
+                      return 'Please enter a valid student id';
+                    }
+                    return null;
+                  },
+                ),
               ),
               const SizedBox(
                 height: 10,
               ),
               ElevatedButton(
                   onPressed: () {
-                    recognizer.registerFaceInDB(
-                        textEditingController.text, recognition.embeddings);
-                    textEditingController.text = "";
+                    recognizer.registerFaceInDB(nameController.text,
+                        int.parse(sidController.text), recognition.embeddings);
+                    nameController.text = "";
+                    sidController.text = "";
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text("Face Registered"),
@@ -161,7 +183,7 @@ class _RegisterState extends State<Register> {
                   },
                   style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.blue,
-                      minimumSize: Size(Layout.height(200), 40)),
+                      minimumSize: Size(Layout.height(200), Layout.height(40))),
                   child: const Text("Register"))
             ],
           ),
@@ -195,7 +217,7 @@ class _RegisterState extends State<Register> {
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.go('/attendace');
+            context.go('/attendance');
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),

@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cwdapp/ML/recognitions.dart';
-import 'package:cwdapp/models/people.dart';
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -55,12 +54,12 @@ class Recognizer {
           .map((e) => double.parse(e))
           .toList()
           .cast<double>();
-      Recognition recognition = Recognition(name, Rect.zero, embd, 0);
+      Recognition recognition = Recognition(name, Rect.zero, embd, 0, people['sid']);
       registered.putIfAbsent(name, () => recognition);
     }
   }
 
-  void registerFaceInDB(String name, List<double> embedding) async {
+  void registerFaceInDB(String name, int sid, List<double> embedding) async {
     // row to insert
     // Map<String, dynamic> row = {
     //   DatabaseHelper.columnName: name,
@@ -71,7 +70,7 @@ class Recognizer {
     try {
       await firestore
           .collection('people')
-          .add({'name': name, 'embedding': embedding.join(',')});
+          .add({'name': name, 'sid': sid, 'embedding': embedding.join(',')});
     } catch (e) {
       //   print(e);
     }
@@ -129,22 +128,21 @@ class Recognizer {
 
     // looks for the nearest embeeding in the database and returns the pair
     Pair pair = findNearest(outputArray);
-    if (pair.distance < 1.25) {
-      
-    }
+    if (pair.distance < 1.25) {}
     // print("distance= ${pair.distance}");
 
     return Recognition(pair.distance < 1.25 ? pair.name : "UNKNOWN FACE",
-        location, outputArray, pair.distance);
+        location, outputArray, pair.distance, pair.SID);
   }
 
   // looks for the nearest embeeding in the database
   // and returns the pair which contain information of registered face with which face is most similar
 
   findNearest(List<double> emb) {
-    Pair pair = Pair("Unknown", -5);
+    Pair pair = Pair("Unknown", -5, 00000);
     for (MapEntry<String, Recognition> item in registered.entries) {
       final String name = item.key;
+      final int SID = item.value.SID;
       List<double> knownEmb = item.value.embeddings;
       double distance = 0;
       for (int i = 0; i < emb.length; i++) {
@@ -155,6 +153,7 @@ class Recognizer {
       if (pair.distance == -5 || distance < pair.distance) {
         pair.distance = distance;
         pair.name = name;
+        pair.SID = SID;
       }
     }
     return pair;
@@ -168,5 +167,6 @@ class Recognizer {
 class Pair {
   String name;
   double distance;
-  Pair(this.name, this.distance);
+  int SID;
+  Pair(this.name, this.distance, this.SID);
 }

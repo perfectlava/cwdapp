@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:cwdapp/ML/Recognizer.dart';
 import 'package:cwdapp/ML/recognitions.dart';
+import 'package:cwdapp/secret.dart';
 import 'package:cwdapp/utils/app_constant.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:gsheets/gsheets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
 
@@ -26,8 +27,12 @@ class _HomePageState extends State<RecognitionScreen> {
 
   // declare face recognizer
   late Recognizer recognizer;
+  late Worksheet? sheet;
+  late Spreadsheet ss;
+  late GSheets gsheets;
   @override
   void initState() {
+    _loadCredential();
     // : implement initState
     super.initState();
     imagePicker = ImagePicker();
@@ -38,6 +43,15 @@ class _HomePageState extends State<RecognitionScreen> {
 
     // initialize face recognizer
     recognizer = Recognizer();
+  }
+
+  _loadCredential() async {
+    print("load creds started");
+    gsheets = GSheets(Secret.credentials);
+    ss = await gsheets.spreadsheet(Secret.spreadsheetId);
+    sheet = ss.worksheetByTitle('Sheet1');
+    print('Google Sheet Successfully Load');
+    print(sheet);
   }
 
   // capture image using camera
@@ -99,7 +113,9 @@ class _HomePageState extends State<RecognitionScreen> {
 
       Recognition recognition = recognizer.recognize(faceImg2, faceRect);
       recognitions.add(recognition);
-      //showFaceRegistrationDialogue(Uint8List.fromList(img.encodePng(faceImg2)), recognition);
+      if (recognition.distance < 1.25) {
+        _uploadData(DateTime.now().toIso8601String(), recognition.name, recognition.SID);
+      }
     }
     drawRectangleAroundFaces();
 
@@ -114,60 +130,11 @@ class _HomePageState extends State<RecognitionScreen> {
     return await File(_image!.path).writeAsBytes(img.encodeJpg(orientedImage));
   }
 
-  // perform Face Recognition
-
-  // Face Registration Dialogue
-  TextEditingController textEditingController = TextEditingController();
-  showFaceRegistrationDialogue(Uint8List cropedFace, Recognition recognition) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text("Face Registration", textAlign: TextAlign.center),
-        alignment: Alignment.center,
-        content: SizedBox(
-          height: 340,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Image.memory(
-                cropedFace,
-                width: 200,
-                height: 200,
-              ),
-              SizedBox(
-                width: 200,
-                child: TextField(
-                    controller: textEditingController,
-                    decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: "Enter Name")),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    textEditingController.text = "";
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Face Registered"),
-                    ));
-                  },
-                  style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.blue,
-                      minimumSize: const Size(200, 40)),
-                  child: const Text("Register"))
-            ],
-          ),
-        ),
-        contentPadding: EdgeInsets.zero,
-      ),
-    );
+  _uploadData(String date, String name, int studentID) async {
+    print("called");
+    await sheet!.values.appendRow([date, name, studentID]);
   }
+
 
   // draw rectangles
   var image;
