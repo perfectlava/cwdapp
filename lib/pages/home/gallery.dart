@@ -63,6 +63,14 @@ class _GalleryState extends ConsumerState<Gallery> {
                     bottom: Layout.height(20),
                     right: Layout.height(20)),
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 5,
+                      blurRadius: 7,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
                     fit: BoxFit.cover,

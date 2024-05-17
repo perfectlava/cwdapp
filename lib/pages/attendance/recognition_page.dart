@@ -30,6 +30,7 @@ class _HomePageState extends State<RecognitionScreen> {
   late Worksheet? sheet;
   late Spreadsheet ss;
   late GSheets gsheets;
+  List<int> SIDs = [];
   @override
   void initState() {
     _loadCredential();
@@ -46,12 +47,23 @@ class _HomePageState extends State<RecognitionScreen> {
   }
 
   _loadCredential() async {
-    print("load creds started");
+    // print("load creds started");
+    DateTime today = DateTime.now();
     gsheets = GSheets(Secret.credentials);
     ss = await gsheets.spreadsheet(Secret.spreadsheetId);
     sheet = ss.worksheetByTitle('Sheet1');
-    print('Google Sheet Successfully Load');
-    print(sheet);
+    // print('Google Sheet Successfully Load');
+    // print(sheet);
+    var data = await sheet!.values.allRows();
+    for (int i = 1; i < data.length; i++) {
+      DateTime dateTime = DateTime(1899, 12, 30)
+          .add(Duration(days: double.parse(data[i][0]).round()));
+      if (dateTime.day == today.day &&
+          dateTime.month == today.month &&
+          dateTime.year == today.year) {
+        SIDs.add(int.parse(data[i][2]));
+      }
+    }
   }
 
   // capture image using camera
@@ -114,7 +126,8 @@ class _HomePageState extends State<RecognitionScreen> {
       Recognition recognition = recognizer.recognize(faceImg2, faceRect);
       recognitions.add(recognition);
       if (recognition.distance < 1.25) {
-        _uploadData(DateTime.now().toIso8601String(), recognition.name, recognition.SID);
+        _uploadData(DateTime.now().toIso8601String(), recognition.name,
+            recognition.SID);
       }
     }
     drawRectangleAroundFaces();
@@ -131,17 +144,17 @@ class _HomePageState extends State<RecognitionScreen> {
   }
 
   _uploadData(String date, String name, int studentID) async {
-    print("called");
-    await sheet!.values.appendRow([date, name, studentID]);
+    if (!SIDs.contains(studentID)) {
+      await sheet!.values.appendRow([date, name, studentID]);
+    }
   }
-
 
   // draw rectangles
   var image;
   drawRectangleAroundFaces() async {
     image = await _image?.readAsBytes();
     image = await decodeImageFromList(image);
-    print("${image.width}   ${image.height}");
+    // print("${image.width}   ${image.height}");
     setState(() {
       recognitions;
       image;
@@ -156,12 +169,12 @@ class _HomePageState extends State<RecognitionScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Attendance"),
+        title: const Text("Recognize Face"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.go('/attendance');
+            context.go('/');
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),
@@ -270,17 +283,45 @@ class FacePainter extends CustomPainter {
     Paint p = Paint();
     p.color = Colors.red;
     p.style = PaintingStyle.stroke;
-    p.strokeWidth = 3;
+    p.strokeWidth = imageFile.width < 300
+        ? 4
+        : imageFile.width < 1000
+            ? 8
+            : 12;
 
     for (Recognition rectangle in facesList) {
       canvas.drawRect(rectangle.location, p);
 
       TextSpan span = TextSpan(
-          style: const TextStyle(color: Colors.white, fontSize: 30),
-          text: "${rectangle.name}  ${rectangle.distance.toStringAsFixed(2)}");
+          style: TextStyle(
+              shadows: const <Shadow>[
+                Shadow(
+                  offset: Offset(4.0, 4.0),
+                  blurRadius: 3.0,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+                Shadow(
+                  offset: Offset(-4.0, -4.0),
+                  blurRadius: 3.0,
+                  color: Color.fromARGB(255, 0, 0, 0),
+                ),
+              ],
+              color: Colors.white,
+              fontSize: imageFile.width < 300
+                  ? 9
+                  : imageFile.width < 600
+                      ? 10
+                      : imageFile.width < 1000
+                          ? 34
+                          : imageFile.width < 2000
+                              ? 48
+                              : 62,
+              fontWeight: FontWeight.bold),
+          text: " ${rectangle.name}");
+      // "${rectangle.name}  ${rectangle.distance.toStringAsFixed(2)}");
       TextPainter tp = TextPainter(
           text: span,
-          textAlign: TextAlign.left,
+          textAlign: TextAlign.center,
           textDirection: TextDirection.ltr);
       tp.layout();
       tp.paint(canvas, Offset(rectangle.location.left, rectangle.location.top));

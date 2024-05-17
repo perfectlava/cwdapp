@@ -42,7 +42,8 @@ class _MainListState extends ConsumerState<MainList> {
                             child: Container(
                               padding: const EdgeInsets.all(10),
                               decoration: BoxDecoration(
-                                  color: Colors.blueAccent,
+                                  color:
+                                      const Color.fromARGB(200, 68, 137, 255),
                                   borderRadius:
                                       BorderRadius.circular(Layout.height(20))),
                               child: Padding(
@@ -56,7 +57,7 @@ class _MainListState extends ConsumerState<MainList> {
                                   children: [
                                     BigText(
                                         text: covers[index].title,
-                                        color: Colors.black87),
+                                        color: Colors.white),
                                     SizedBox(
                                       height: Layout.height(12),
                                     ),

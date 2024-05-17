@@ -20,6 +20,7 @@ class Register extends StatefulWidget {
 class _RegisterState extends State<Register> {
   //declare variables
   late ImagePicker imagePicker;
+  late double originalImageWidth;
   File? _image;
 
   //declare detector
@@ -198,6 +199,7 @@ class _RegisterState extends State<Register> {
   drawRectangleAroundFaces() async {
     image = await _image?.readAsBytes();
     image = await decodeImageFromList(image);
+    originalImageWidth = image.width;
     // print("${image.width}   ${image.height}");
     setState(() {
       image;
@@ -212,12 +214,12 @@ class _RegisterState extends State<Register> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         centerTitle: true,
-        title: const Text("Attendance"),
+        title: const Text("Regsiter Face"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
           onPressed: () {
-            context.go('/attendance');
+            context.go('/');
           },
           icon: const Icon(Icons.arrow_back_ios),
         ),

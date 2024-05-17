@@ -13,7 +13,7 @@ class Recognizer {
   static const int WIDTH = 112;
   static const int HEIGHT = 112;
   // final dbHelper = DatabaseHelper();
-  Map<String, Recognition> registered = {};
+  List<Recognition> registered = [];
   @override
   String get modelName => 'assets/mobile_face_net.tflite';
 
@@ -54,8 +54,9 @@ class Recognizer {
           .map((e) => double.parse(e))
           .toList()
           .cast<double>();
-      Recognition recognition = Recognition(name, Rect.zero, embd, 0, people['sid']);
-      registered.putIfAbsent(name, () => recognition);
+      Recognition recognition =
+          Recognition(name, Rect.zero, embd, 0, people['sid']);
+      registered.add(recognition);
     }
   }
 
@@ -140,10 +141,10 @@ class Recognizer {
 
   findNearest(List<double> emb) {
     Pair pair = Pair("Unknown", -5, 00000);
-    for (MapEntry<String, Recognition> item in registered.entries) {
-      final String name = item.key;
-      final int SID = item.value.SID;
-      List<double> knownEmb = item.value.embeddings;
+    for (Recognition item in registered) {
+      final String name = item.name;
+      final int SID = item.SID;
+      List<double> knownEmb = item.embeddings;
       double distance = 0;
       for (int i = 0; i < emb.length; i++) {
         double diff = emb[i] - knownEmb[i];
