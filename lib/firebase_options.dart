@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -25,7 +28,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -43,15 +49,6 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCo5kCK90yY24GmIywzMZOU7r2MkA_g6c4',
-    appId: '1:1060417419957:web:4d00c4c9112da7a2ae1cfc',
-    messagingSenderId: '1060417419957',
-    projectId: 'cwdapp-91162',
-    authDomain: 'cwdapp-91162.firebaseapp.com',
-    storageBucket: 'cwdapp-91162.appspot.com',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDY-G5vpDjdR92HP5eAQjRA3YAerUlp8pE',
     appId: '1:1060417419957:android:6e8bb8c16b96ea5dae1cfc',
@@ -67,14 +64,5 @@ class DefaultFirebaseOptions {
     projectId: 'cwdapp-91162',
     storageBucket: 'cwdapp-91162.appspot.com',
     iosBundleId: 'com.example.cwdapp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC12FkPXgXrWdIN_zf7vy7gIV2b6Jc8prI',
-    appId: '1:1060417419957:ios:7da93eef46d88663ae1cfc',
-    messagingSenderId: '1060417419957',
-    projectId: 'cwdapp-91162',
-    storageBucket: 'cwdapp-91162.appspot.com',
-    iosBundleId: 'com.example.cwdapp.RunnerTests',
   );
 }

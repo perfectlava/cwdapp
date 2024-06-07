@@ -228,14 +228,7 @@ class _RegisterState extends State<Register> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           image != null
-              ?
-              // Container(
-              //         margin:  EdgeInsets.only(top: Layout.height(100)),
-              //         width: Layout.getScreenWidth() - Layout.height(50),
-              //         height: Layout.getScreenWidth() - Layout.height(50),
-              //         child: Image.file(_image!),
-              //       )
-              Container(
+              ? Container(
                   margin: EdgeInsets.only(
                       top: Layout.height(60),
                       left: Layout.height(30),
@@ -253,11 +246,23 @@ class _RegisterState extends State<Register> {
                   ),
                 )
               : Container(
-                  margin: EdgeInsets.only(top: Layout.height(100)),
-                  child: Image.asset(
-                    "images/logo.png",
-                    width: Layout.getScreenWidth() - Layout.height(100),
-                    height: Layout.getScreenWidth() - Layout.height(100),
+                  height: Layout.height(300),
+                  margin: EdgeInsets.only(
+                      top: Layout.height(100),
+                      right: Layout.width(30),
+                      left: Layout.width(30)),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: Layout.width(30),
+                      vertical: Layout.height(60)),
+                  decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(Layout.width(30))),
+                  child: Text(
+                    "Uh-oh! Our system can't admire your stunning looks without a photo!",
+                    style: TextStyle(
+                        color: Colors.green[400],
+                        fontWeight: FontWeight.w500,
+                        fontSize: 20),
                   ),
                 ),
 
